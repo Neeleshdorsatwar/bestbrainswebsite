@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainWeb - General Schedule (All Ages)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f7ff;
+        }
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 0;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .age-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .age-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .age-button.younger {
+            background-color: #1a4b8c;
+            color: white;
+        }
+        .age-button.older {
+            background-color: #ff6b35;
+            color: white;
+        }
+        .age-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .age-button.active {
+            box-shadow: 0 0 15px currentColor;
+        }
+        .age-content {
+            display: none;
+        }
+        .age-content.active {
+            display: block;
+        }
+        h1, h2 {
+            color: #1a4b8c;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        h2 {
+            margin: 40px 0 20px;
+            color: #ff6b35;
+        }
+        .weeks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .week-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            border: 2px solid #e6f0ff;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+        .week-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff6b35;
+        }
+        .week-number {
+            font-size: 1.2em;
+            color: #1a4b8c;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .week-title {
+            font-size: 1.4em;
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+        }
+        .schedule-table th, .schedule-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e6f0ff;
+        }
+        .schedule-table th {
+            background-color: #1a4b8c;
+            color: white;
+            font-weight: bold;
+        }
+        .schedule-table tr:nth-child(even) {
+            background-color: #f8fbff;
+        }
+        .schedule-table tr:hover {
+            background-color: #fff5f0;
+        }
+        .time-column {
+            width: 150px;
+            font-weight: bold;
+            color: #1a4b8c;
+        }
+        .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .day-plan {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .day-plan p {
+            margin: 10px 0 5px 0;
+            color: #1a4b8c;
+        }
+        .day-plan ul {
+            margin: 0 0 15px 0;
+            padding-left: 20px;
+        }
+        .day-plan li {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+        .day-plan ul ul {
+            margin: 5px 0;
+            padding-left: 25px;
+        }
+        .day-plan ul ul li {
+            font-size: 0.95em;
+            color: #666;
+        }
+        .day-plan strong {
+            color: #1a4b8c;
+        }
+        .week-card::-webkit-scrollbar {
+            width: 8px;
+        }
+        .week-card::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .week-card::-webkit-scrollbar-thumb {
+            background: #1a4b8c;
+            border-radius: 4px;
+        }
+        .week-card::-webkit-scrollbar-thumb:hover {
+            background: #ff6b35;
+        }
+        .title-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .title-section {
+            background-color: #e6f0ff;
+            border: 2px solid #1a4b8c;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="bestbrains-logo.png" alt="Best Brains Logo" class="logo">
+    </div>
+    <div class="container">
+        <div class="title-section">
+        <div class="title-flex">
+            <h1 style="margin: 0; text-align: center;">Best Brains Phoenix North Summer Camp</h1>
+        </div>
+        <p style="text-align: center; margin-top: 0; margin-bottom: 0; font-size: 1.1em; color: #333;">Join us for a fun, engaging, and educational summer at Best Brains Phoenix North! Our camp is designed for kids ages 5–14 and combines learning with creativity, games, and life skills—all in a safe, supportive environment. Campers are thoughtfully divided into two age groups: 5–8 and 9–14, with activities tailored to each group's developmental stage. Each week features exciting educational themes like STEM, Creative Writing, Public Speaking, Entrepreneurship, AI, Math, and more. Kids enjoy a full day of structured activities including:
+        <br><br>
+        🧘 Morning yoga & mindfulness<br>
+        🧠 Themed learning sessions<br>
+        🎲 Games, puzzles, and challenges~<br>
+        🖍️ Art, building, and hands-on creativity<br>
+        💬 Life skills, gratitude, and confidence-building
+        </p>
+        </div>
+        
+        <div class="age-selector">
+            <button class="age-button younger active" onclick="switchAgeGroup('younger')">Ages 5-8</button>
+            <button class="age-button older" onclick="switchAgeGroup('older')">Ages 8-14</button>
+        </div>
+
+        <div id="younger-content" class="age-content active">
+            <h2>Program Weeks (Ages 5-8)</h2>
+            <div class="weeks-container">
+                <div class="week-card">
+                    <div class="week-number">Week 1</div>
+                    <div class="week-title">Brainboost Week</div>
+                    <p><strong>Week 1 – BrainBoost Week 🧠</strong></p>
+                    <p><strong>Objective:</strong> Strengthen early math, logic, and problem-solving skills through movement, games, and play.</p>
+                    <p><strong>Purpose:</strong> Build number confidence, critical thinking, and real-world math connections.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Abacus exploration + Money Magic store play</p>
+                        <p><strong>Tuesday:</strong> Math Jeopardy + Shape Safari with tangrams</p>
+                        <p><strong>Wednesday:</strong> Math Relay + Time Detectives (clocks & puzzles)</p>
+                        <p><strong>Thursday:</strong> Math Ball + Data Day (bar graphs & sorting)</p>
+                        <p><strong>Friday:</strong> Math Scavenger Hunt + Logic games & puzzles</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 2</div>
+                    <div class="week-title">Creative Authors Week</div>
+                    <p><strong>Week 2 – Creative Authors Week ✍️</strong></p>
+                    <p><strong>Objective:</strong> Develop storytelling skills and creative writing abilities through engaging activities and guided practice.</p>
+                    <p><strong>Purpose:</strong> Build confidence in self-expression, narrative structure, and descriptive writing.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Story foundations + Powerful sentences workshop</p>
+                        <p><strong>Tuesday:</strong> Hero creation + Story mapping adventure</p>
+                        <p><strong>Wednesday:</strong> First draft writing + Peer feedback session</p>
+                        <p><strong>Thursday:</strong> Revision techniques + Story polishing</p>
+                        <p><strong>Friday:</strong> Final edits + Author showcase celebration</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 3</div>
+                    <div class="week-title">Young Coders Week</div>
+                    <p><strong>Week 3 – Young Coders Week 💻</strong></p>
+                    <p><strong>Objective:</strong> Introduce basic coding concepts and digital storytelling through ScratchJr.</p>
+                    <p><strong>Purpose:</strong> Develop computational thinking and creative problem-solving skills.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Storytelling basics + ScratchJr introduction</p>
+                        <p><strong>Tuesday:</strong> World building + Background creation</p>
+                        <p><strong>Wednesday:</strong> Character dialogue + Sound effects</p>
+                        <p><strong>Thursday:</strong> Project creation + Story development</p>
+                        <p><strong>Friday:</strong> Final touches + Project showcase</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 4</div>
+                    <div class="week-title">STEAM Explorers Week</div>
+                    <p><strong>Week 4 – STEAM Explorers Week 🔬</strong></p>
+                    <p><strong>Objective:</strong> Explore science, technology, engineering, art, and math through hands-on experiments and activities.</p>
+                    <p><strong>Purpose:</strong> Foster curiosity, critical thinking, and problem-solving through interactive STEAM experiences.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Biology & Chemistry fun + DNA extraction</p>
+                        <p><strong>Tuesday:</strong> States of matter + Chemistry experiments</p>
+                        <p><strong>Wednesday:</strong> Astronomy day + Solar system exploration</p>
+                        <p><strong>Thursday:</strong> Physics adventures + Motion experiments</p>
+                        <p><strong>Friday:</strong> Engineering challenges + Tower building</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 5</div>
+                    <div class="week-title">Public Speaking Week</div>
+                    <p><strong>Week 5 – Public Speaking Week 🎤</strong></p>
+                    <p><strong>Objective:</strong> Build confidence in public speaking and presentation skills.</p>
+                    <p><strong>Purpose:</strong> Develop effective communication and self-expression abilities.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Speech basics + Voice exercises</p>
+                        <p><strong>Tuesday:</strong> Body language + Presentation skills</p>
+                        <p><strong>Wednesday:</strong> Storytelling + Speech writing</p>
+                        <p><strong>Thursday:</strong> Practice sessions + Peer feedback</p>
+                        <p><strong>Friday:</strong> Final presentations + Celebration</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 6</div>
+                    <div class="week-title">AI and Entrepreneurship Week</div>
+                    <p><strong>Week 6 – AI & Entrepreneurship Week 🚀</strong></p>
+                    <p><strong>Objective:</strong> Introduce basic business concepts and creative AI tools through fun, age-appropriate activities.</p>
+                    <p><strong>Purpose:</strong> Develop entrepreneurial thinking and digital creativity.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Business basics + Character creation</p>
+                        <p><strong>Tuesday:</strong> Product design + World building</p>
+                        <p><strong>Wednesday:</strong> Marketing fun + Stand building</p>
+                        <p><strong>Thursday:</strong> Business practice + Story creation</p>
+                        <p><strong>Friday:</strong> Grand opening + Showcase celebration</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Daily Schedule (Ages 5-8)</h2>
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="time-column">8:00 – 9:00 AM</td>
+                        <td>Free play: coloring, puzzles, brain games</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">9:00 – 9:30 AM</td>
+                        <td>Simple yoga and stretching exercises</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">9:30 – 10:00 AM</td>
+                        <td>Snack time and simple word games</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">10:00 – 11:30 AM</td>
+                        <td>Morning learning activities</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">11:30 – 12:00 PM</td>
+                        <td>Fun educational games</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">12:00 – 12:30 PM</td>
+                        <td>Lunch (brought from home)</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">12:30 – 2:00 PM</td>
+                        <td>Afternoon activities and games</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">2:00 – 2:30 PM</td>
+                        <td>Simple board games and activities</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">2:30 – 3:00 PM</td>
+                        <td>Creative art and building activities</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="older-content" class="age-content">
+            <h2>Program Weeks (Ages 8-14)</h2>
+            <div class="weeks-container">
+                <div class="week-card">
+                    <div class="week-number">Week 1</div>
+                    <div class="week-title">Brainboost Week</div>
+                    <p><strong>Week 1 – BrainBoost Week 🧠</strong></p>
+                    <p><strong>Objective:</strong> Strengthen advanced math, logic, and problem-solving skills through interactive challenges and real-world applications.</p>
+                    <p><strong>Purpose:</strong> Build mathematical confidence, critical thinking, and practical problem-solving abilities.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Abacus mastery + Money management challenges</p>
+                        <p><strong>Tuesday:</strong> Math Jeopardy + Advanced geometry exploration</p>
+                        <p><strong>Wednesday:</strong> Math relay competitions + Time-based problem solving</p>
+                        <p><strong>Thursday:</strong> Math ball challenges + Data analysis projects</p>
+                        <p><strong>Friday:</strong> Math treasure hunt + Advanced logic puzzles</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 2</div>
+                    <div class="week-title">Creative Authors Week</div>
+                    <p><strong>Week 2 – Creative Authors Week ✍️</strong></p>
+                    <p><strong>Objective:</strong> Master advanced storytelling techniques and creative writing skills through structured workshops.</p>
+                    <p><strong>Purpose:</strong> Develop sophisticated narrative abilities and professional writing techniques.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Advanced story structure + Literary techniques</p>
+                        <p><strong>Tuesday:</strong> Character development + Plot mapping</p>
+                        <p><strong>Wednesday:</strong> Creative writing workshop + Peer review</p>
+                        <p><strong>Thursday:</strong> Advanced revision techniques + Style development</p>
+                        <p><strong>Friday:</strong> Final editing + Author showcase</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 3</div>
+                    <div class="week-title">Young Coders Week</div>
+                    <p><strong>Week 3 – Young Coders Week 💻</strong></p>
+                    <p><strong>Objective:</strong> Master Unity game development fundamentals and create interactive 2D games.</p>
+                    <p><strong>Purpose:</strong> Develop professional game development skills and computational thinking.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Unity basics + Game design principles</p>
+                        <p><strong>Tuesday:</strong> Environment building + Asset management</p>
+                        <p><strong>Wednesday:</strong> Player mechanics + Physics implementation</p>
+                        <p><strong>Thursday:</strong> Game mechanics + Enemy AI development</p>
+                        <p><strong>Friday:</strong> Game polishing + Project showcase</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 4</div>
+                    <div class="week-title">STEAM Explorers Week</div>
+                    <p><strong>Week 4 – STEAM Explorers Week 🔬</strong></p>
+                    <p><strong>Objective:</strong> Explore advanced STEAM concepts through hands-on experiments and scientific inquiry.</p>
+                    <p><strong>Purpose:</strong> Develop scientific thinking and engineering problem-solving skills.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Advanced biology + DNA analysis</p>
+                        <p><strong>Tuesday:</strong> Chemical reactions + pH experiments</p>
+                        <p><strong>Wednesday:</strong> Astronomy + Exoplanet discovery</p>
+                        <p><strong>Thursday:</strong> Physics + Motion analysis</p>
+                        <p><strong>Friday:</strong> Engineering challenges + Project showcase</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 5</div>
+                    <div class="week-title">Public Speaking Week</div>
+                    <p><strong>Week 5 – Public Speaking Week 🎤</strong></p>
+                    <p><strong>Objective:</strong> Master advanced public speaking techniques and presentation skills.</p>
+                    <p><strong>Purpose:</strong> Develop professional communication abilities and confident self-expression.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> Advanced speech techniques + Voice modulation</p>
+                        <p><strong>Tuesday:</strong> Body language mastery + Stage presence</p>
+                        <p><strong>Wednesday:</strong> Speech writing + Storytelling techniques</p>
+                        <p><strong>Thursday:</strong> Advanced practice + Professional feedback</p>
+                        <p><strong>Friday:</strong> Final presentations + Celebration</p>
+                    </div>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">Week 6</div>
+                    <div class="week-title">AI and Entrepreneurship Week</div>
+                    <p><strong>Week 6 – AI & Entrepreneurship Week 🚀</strong></p>
+                    <p><strong>Objective:</strong> Master AI tools and develop entrepreneurial skills through hands-on business projects.</p>
+                    <p><strong>Purpose:</strong> Build digital literacy and business acumen for the modern world.</p>
+                    <div class="day-plan">
+                        <p><strong>Daily Highlights:</strong></p>
+                        <p><strong>Monday:</strong> AI fundamentals + Business ideation</p>
+                        <p><strong>Tuesday:</strong> Brand development + AI design tools</p>
+                        <p><strong>Wednesday:</strong> Website creation + Digital presence</p>
+                        <p><strong>Thursday:</strong> Marketing strategy + AI content creation</p>
+                        <p><strong>Friday:</strong> Business pitch + Project showcase</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Daily Schedule (Ages 8-14)</h2>
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="time-column">8:00 – 9:00 AM</td>
+                        <td>Advanced puzzles and strategic games</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">9:00 – 9:30 AM</td>
+                        <td>Advanced yoga and mindfulness exercises</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">9:30 – 10:00 AM</td>
+                        <td>Snack + Advanced word challenges and discussions</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">10:00 – 11:30 AM</td>
+                        <td>Advanced learning sessions and projects</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">11:30 – 12:00 PM</td>
+                        <td>Advanced trivia and educational challenges</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">12:00 – 12:30 PM</td>
+                        <td>Lunch (brought from home)</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">12:30 – 2:00 PM</td>
+                        <td>Advanced projects and team activities</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">2:00 – 2:30 PM</td>
+                        <td>Advanced board games and strategy challenges</td>
+                    </tr>
+                    <tr>
+                        <td class="time-column">2:30 – 3:00 PM</td>
+                        <td>Advanced creative projects and presentations</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function switchAgeGroup(ageGroup) {
+            // Update button states
+            document.querySelector('.age-button.younger').classList.toggle('active', ageGroup === 'younger');
+            document.querySelector('.age-button.older').classList.toggle('active', ageGroup === 'older');
+            
+            // Update content visibility
+            document.getElementById('younger-content').classList.toggle('active', ageGroup === 'younger');
+            document.getElementById('older-content').classList.toggle('active', ageGroup === 'older');
+        }
+    </script>
+</body>
+</html> 
